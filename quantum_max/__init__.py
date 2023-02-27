@@ -1,0 +1,1 @@
+from .qiskitmax import QiskitMax
