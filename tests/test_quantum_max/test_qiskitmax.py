@@ -44,6 +44,13 @@ def test_circuit_append():
     assert d2 > d1
 
 
+def test_value_out_of_bounds():
+    qmax = QiskitMax(3)
+    qmax.values = [99, -35]
+    with pytest.raises(IndexError):
+        qmax_gate = qmax.to_gate()
+
+
 def test_3bit_results():
     """Tests 20 random 3-bit signed integers"""
     for _ in range(20):
