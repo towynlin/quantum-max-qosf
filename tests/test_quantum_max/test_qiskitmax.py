@@ -87,6 +87,49 @@ def test_5bit_results():
         assert_correct_max(max_a0_b1, qmax.values)
 
 
+def test_6bit_results():
+    """Tests 4 random 6-bit signed integers"""
+    for _ in range(4):
+        qmax = QiskitMax(6)
+        qmax.values = [randrange(-32, 32), randrange(-32, 32)]
+        circuit = QuantumCircuit(15, 1)
+        circuit.append(qmax.to_gate(), range(circuit.num_qubits))
+        circuit.measure(14, 0)
+        max_a0_b1 = simulate_and_get_answer(circuit)
+        assert_correct_max(max_a0_b1, qmax.values)
+
+
+def test_7bit_results():
+    """Tests 4 random 7-bit signed integers"""
+    for _ in range(4):
+        qmax = QiskitMax(7)
+        qmax.values = [randrange(-64, 64), randrange(-64, 64)]
+        circuit = QuantumCircuit(17, 1)
+        circuit.append(qmax.to_gate(), range(circuit.num_qubits))
+        circuit.measure(16, 0)
+        max_a0_b1 = simulate_and_get_answer(circuit)
+        assert_correct_max(max_a0_b1, qmax.values)
+
+
+def test_any_precision():
+    """Test higher precisions with 1 randomly generated input each.
+
+    The statevector_simulator allows 24 qubits max, so 10-bit integers are
+    the highest precision we can compare without a bigger quantum computer.
+    """
+    print()
+    for p in range(8, 11):
+        print(f"Testing precision {p}")
+        qmax = QiskitMax(p)
+        limit = 2 ** (p - 1)
+        qmax.values = [randrange(-limit, limit), randrange(-limit, limit)]
+        circuit = QuantumCircuit(2 * p + 3, 1)
+        circuit.append(qmax.to_gate(), range(circuit.num_qubits))
+        circuit.measure(2 * p + 2, 0)
+        max_a0_b1 = simulate_and_get_answer(circuit)
+        assert_correct_max(max_a0_b1, qmax.values)
+
+
 def simulate_and_get_answer(circuit: QuantumCircuit) -> str:
     sim = BasicAer.get_backend("statevector_simulator")
     compiled_circuit = transpile(circuit, sim)

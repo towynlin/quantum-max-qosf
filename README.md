@@ -33,16 +33,27 @@ whereas odd parity means that _b_ is the greater signed value.
 This repo was developed and tested with python 3.10.10,
 qiskit 0.41.1, qiskit-terra 0.23.2, and qiskit-aer 0.11.2.
 The circuit is created as a qiskit circuit library component.
+Code is formatted by black.
+
 Tests proving the intended functionality are written with pytest,
-including tests of randomly generated 3-bit, 4-bit, and 5-bit
-input values. Code is formatted by black.
+including tests of randomly generated input values from 3-bit and
+4-bit precision, all the way up to 10-bit precision.
+
+As long as one has a quantum computer or simulator with enough qubits,
+this solution will work for any size integer. See the test
+`test_any_precision` for an example showing the constraints.
+
+The `statevector_simulator` allows up to 24 qubits, so 10-bit integers
+are the largest ones we can compare without a bigger quantum computer.
+Running all the tests takes about 105 seconds on my laptop;
+most of that time is taken by the one and only 10-bit circuit execution.
 
 ```sh
 python3.10 -m venv venv
 source venv/bin/activate
 pip install -U pip
 pip install -U -r requirements.txt
-pytest
+pytest -s
 python example.py
 ```
 
