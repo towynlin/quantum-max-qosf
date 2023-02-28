@@ -106,7 +106,7 @@ class QiskitMax(BlueprintCircuit, Operation):
         self, value: int, register: QuantumRegister, circuit: QuantumCircuit
     ) -> None:
         """Encode the given signed integer value into the given QuantumRegister
-        and QuantunCircuit with X gates for each bit with value 1."""
+        and QuantumCircuit with X gates for each bit with value 1."""
         v = value
         if v < 0:
             v += 2**self.num_state_qubits
@@ -136,8 +136,8 @@ class QiskitMax(BlueprintCircuit, Operation):
         circuit.cx(qr_b[-1], anc[2])
 
         # The adder becomes a subtractor when we bit-flip the first operand before adding,
-        # and then bit-flip both the sum and the first operand after addiing.
-        # The carry qubit gives info about whether the result of subtraction is negative.
+        # and then bit-flip both the sum and the first operand after adding.
+        # The carry qubit gives info about which operand is greater.
         circuit.x(qr_a)
         adder_gate = self._adder.to_gate()
         circuit.append(adder_gate, range(adder_gate.num_qubits))

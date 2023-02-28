@@ -28,7 +28,8 @@ Thus, I had to determine the maximum using the parity of 3 values:
 Even parity means that _a_ is the greater signed value,
 whereas odd parity means that _b_ is the greater signed value.
 
-## Usage
+
+## Versions, Tools, Code Structure
 
 This repo was developed and tested with python 3.10.10,
 qiskit 0.41.1, qiskit-terra 0.23.2, and qiskit-aer 0.11.2.
@@ -47,7 +48,11 @@ for an example showing the constraints.
 The `statevector_simulator` allows up to 24 qubits, so 10-bit integers
 are the largest ones we can compare without a bigger quantum computer.
 Running all the tests takes about 105 seconds on my laptop;
-most of that time is taken by the one and only 10-bit circuit execution.
+most of that time, about 75 seconds, is taken by the one and only
+10-bit circuit execution.
+
+
+## Usage
 
 ```sh
 python3.10 -m venv venv
