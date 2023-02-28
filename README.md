@@ -63,7 +63,9 @@ pytest -s
 python example.py
 ```
 
-Running example.py will print the following:
+Running
+[example.py](https://github.com/towynlin/quantum-max-qosf/blob/main/example.py)
+will print the following:
 
 ```
 Finding the largest number among the choices 5 and -6...
