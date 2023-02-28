@@ -41,7 +41,8 @@ including tests of randomly generated input values from 3-bit and
 
 As long as one has a quantum computer or simulator with enough qubits,
 this solution will work for any size integer. See the test
-`test_any_precision` for an example showing the constraints.
+[`test_any_precision`](https://github.com/towynlin/quantum-max-qosf/blob/7835f97904dd9f42692bd5299fc11902faf4ee45/tests/test_quantum_max/test_qiskitmax.py#L114-L130)
+for an example showing the constraints.
 
 The `statevector_simulator` allows up to 24 qubits, so 10-bit integers
 are the largest ones we can compare without a bigger quantum computer.
