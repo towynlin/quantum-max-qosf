@@ -8,12 +8,53 @@ from typing import List, Optional
 
 
 class QiskitMax(BlueprintCircuit, Operation):
-    """Uses a quantum circuit to calculate the maximum of a list of integers."""
+    """Uses a quantum circuit to calculate the maximum of a list of signed integers.
+
+    Example usage:
+
+        Create a QiskitMax circuit, specifying the integer precision.
+
+            `qmax = QiskitMax(4)`
+
+        Set the two values to compare.
+
+            `qmax.values = [5, -6]`
+
+        Create a circuit with at least 2**num_state_qubits + 3 qubits.
+
+            `circuit = QuantumCircuit(11, 1)`
+
+        Turn the resulting circuit into a gate.
+
+            `qmax_gate = qmax.to_gate()`
+
+        Append the gate the the circuit.
+
+            `circuit.append(qmax_gate, range(circuit.num_qubits))`
+
+        Measure the last qubit of the gate.
+        If the result is 0, then the first value is greater.
+        If the result is 1, then the second value is greater.
+
+            `circuit.measure(10, 0)`
+
+        This example should give 0, since 5 > -6.
+    """
 
     def __init__(
         self, num_state_qubits: int, adder: Optional[Adder] = None, name: str = "max"
     ) -> None:
-        """Creates a new qiskit circuit to calculate the maximum of a list of integers."""
+        """Creates a new qiskit circuit to calculate the maximum of a list of integers.
+
+        The number of qubits needed for this circuit is 2 * num_state_qubits + 3 ancillas.
+
+        Args:
+            num_state_qubits: The number of qubits in one input register.
+                The two input registers must have the same number of qubits.
+            adder: Untested. Substitute a different adder than the default,
+                which is a ``CDKMRippleCarryAdder`` in half-adder mode.
+            name: The name of the circuit object.
+        """
         super().__init__(name=name)
         self._num_state_qubits = num_state_qubits
         self._values = []
@@ -64,6 +105,8 @@ class QiskitMax(BlueprintCircuit, Operation):
     def _encode(
         self, value: int, register: QuantumRegister, circuit: QuantumCircuit
     ) -> None:
+        """Encode the given signed integer value into the given QuantumRegister
+        and QuantunCircuit with X gates for each bit with value 1."""
         v = value
         if v < 0:
             v += 2**self.num_state_qubits
@@ -71,7 +114,7 @@ class QiskitMax(BlueprintCircuit, Operation):
             if bit == "1":
                 circuit.x(register[idx])
 
-    def _build(self) -> None:
+    def _build(self, should_draw: bool = False) -> None:
         """If not already built, build the circuit."""
         if self._is_built:
             return
@@ -87,12 +130,14 @@ class QiskitMax(BlueprintCircuit, Operation):
         self._encode(self.values[0], qr_a, circuit)
         self._encode(self.values[1], qr_b, circuit)
 
-        # Save the sign of register B before we modify it
+        # TODO: Add more than the first 2 values
+
+        # Save the sign of register B in the third ancilla qubit before we modify B
         circuit.cx(qr_b[-1], anc[2])
 
         # The adder becomes a subtractor when we bit-flip the first operand before adding,
         # and then bit-flip both the sum and the first operand after addiing.
-        # The carry qubit tells us whether the result of subtraction is negative.
+        # The carry qubit gives info about whether the result of subtraction is negative.
         circuit.x(qr_a)
         adder_gate = self._adder.to_gate()
         circuit.append(adder_gate, range(adder_gate.num_qubits))
@@ -103,6 +148,10 @@ class QiskitMax(BlueprintCircuit, Operation):
         # Calculate the parity of carry and sign a and sign b in anc[2]
         circuit.cx(qr_a[-1], anc[2])
         circuit.cx(anc[0], anc[2])
+        # After this, measuring anc[2] will give 0 if a is the max, or 1 if b is the max
+
+        if should_draw:
+            print(circuit.draw("text"))
 
         # Calling `self.append` triggers a call to `_build`, so
         # we set `_is_built` to `True` first, to prevent stack overflow.

@@ -30,9 +30,12 @@ whereas odd parity means that _b_ is the greater signed value.
 
 ## Usage
 
-This repo was created with python 3.10.
+This repo was developed and tested with python 3.10.10,
+qiskit 0.41.1, qiskit-terra 0.23.2, and qiskit-aer 0.11.2.
 The circuit is created as a qiskit circuit library component.
-Tests proving the intended functionality are written with pytest.
+Tests proving the intended functionality are written with pytest,
+including tests of randomly generated 3-bit, 4-bit, and 5-bit
+input values. Code is formatted by black.
 
 ```sh
 python3.10 -m venv venv
@@ -40,4 +43,35 @@ source venv/bin/activate
 pip install -U pip
 pip install -U -r requirements.txt
 pytest
+python example.py
+```
+
+Running example.py will print the following:
+
+```
+Finding the largest number among the choices 5 and -6...
+The answer is: 5
+      ┌───┐┌───┐┌───────────────────────┐┌───┐          
+q6_0: ┤ X ├┤ X ├┤0                      ├┤ X ├──────────
+      ├───┤└───┘│                       │├───┤          
+q6_1: ┤ X ├─────┤1                      ├┤ X ├──────────
+      ├───┤┌───┐│                       │├───┤          
+q6_2: ┤ X ├┤ X ├┤2                      ├┤ X ├──────────
+      ├───┤└───┘│                       │├───┤          
+q6_3: ┤ X ├─────┤3                      ├┤ X ├──■───────
+      └───┘     │                       │├───┤  │       
+q7_0: ──────────┤4                      ├┤ X ├──┼───────
+      ┌───┐     │  CDKMRippleCarryAdder │├───┤  │       
+q7_1: ┤ X ├─────┤5                      ├┤ X ├──┼───────
+      └───┘     │                       │├───┤  │       
+q7_2: ──────────┤6                      ├┤ X ├──┼───────
+      ┌───┐     │                       │├───┤  │       
+q7_3: ┤ X ├──■──┤7                      ├┤ X ├──┼───────
+      └───┘  │  │                       │└───┘  │       
+a1_0: ───────┼──┤8                      ├───────┼────■──
+             │  │                       │       │    │  
+a1_1: ───────┼──┤9                      ├───────┼────┼──
+           ┌─┴─┐└───────────────────────┘     ┌─┴─┐┌─┴─┐
+a1_2: ─────┤ X ├──────────────────────────────┤ X ├┤ X ├
+           └───┘                              └───┘└───┘
 ```
